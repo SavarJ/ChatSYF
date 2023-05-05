@@ -16,32 +16,53 @@ struct ContentView: View {
     @State var audioRecorder: AVAudioRecorder!
     @State var microphoneAlert = false
     @State var audioFileURL: URL?
-    @State var messages: [String] = ["msg 1", "msg 2", "msg 3"]
+    @State var messages: [String] = ["Hi! I'm Sydney - your AI Concierge Bot. How can I help redirect your call?"]
     @State var audioFiles: [String] = []
 
 
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(alignment: .center) {
                 ScrollView {
 
-                    VStack(alignment: .leading) {
-                        ForEach(messages, id: \.self) { message in
+                   
+                        ForEach(messages.indices, id: \.self) { index in
+                            
+                            VStack(alignment: index % 2 == 0 ? .leading : .trailing) {
 
                             HStack(alignment: .top, spacing: 12) {
 
-                                // Black circle as profile picture
-                                Circle()
-                                    .fill(Color.black)
-                                    .frame(width: 30, height: 30)
+                                if index % 2 == 0 {
+                                    Circle()
+                                        .fill(Color.black)
+                                        .frame(width: 30, height: 30)
 
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(message)
-                                        .foregroundColor(.white)
-                                        .padding(10)
-                                        .background(Color.blue)
-                                        .cornerRadius(12)
-                                        .lineLimit(nil)
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text(messages[index])
+                                            .padding(10)
+                                            .background(Color.yellow)
+                                            .foregroundColor(.white)
+                                            .font(.headline)
+                                            .cornerRadius(12)
+                                            .lineLimit(nil)
+
+                                    }
+                                }
+                                else{
+                                    // Black circle as profile picture
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text(messages[index])
+                                            .foregroundColor(.white)
+                                            .padding(10)
+                                            .background(Color.blue)
+                                            .font(.headline)
+                                            .cornerRadius(12)
+                                            .lineLimit(nil)
+                                    }
+                                    Circle()
+                                        .fill(Color.gray)
+                                        .frame(width: 30, height: 30)
+
                                 }
                                 Spacer()
                             }.padding(.bottom, 4)
@@ -63,6 +84,8 @@ struct ContentView: View {
                         .padding(15)
                         .background(self.isRecording ? Color.red : Color.yellow)
                         .clipShape(Circle())
+                        .opacity(self.isRecording ? 0.5 : 1)
+
                 }
 
                 Spacer()
@@ -197,8 +220,13 @@ struct ContentView: View {
                 
                 if let data = data {
                     // Process the response data
-                    
-                    messages.append("\(String(data: data, encoding: .utf8) ?? "")")
+                    var obj = "\(String(data: data, encoding: .utf8) ?? "")"
+                    obj = obj.replacingOccurrences(of:"\"", with:"").replacingOccurrences(of:"\\", with:"")
+                    var object = obj.components(separatedBy: "IAMGREAT")
+//                    object[0] will be user message
+//                    object[1] will be ai message
+                    messages.append(object[0])
+                    messages.append(object[1])
                     print("Response: \(String(data: data, encoding: .utf8) ?? "")")
                 }
             }.resume()
