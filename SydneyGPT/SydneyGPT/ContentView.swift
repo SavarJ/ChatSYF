@@ -18,25 +18,20 @@ struct ContentView: View {
     @State var audioFileURL: URL?
     @State var messages: [String] = ["Hi! I'm Sydney - your AI Concierge Bot. How can I help redirect your call?"]
     @State var audioFiles: [String] = []
-
+    @State private var isAnimating = false
+    @State private var isVisible = true
 
     var body: some View {
         NavigationView {
             VStack(alignment: .center) {
                 ScrollView {
-
-                   
                         ForEach(messages.indices, id: \.self) { index in
-                            
                             VStack(alignment: index % 2 == 0 ? .leading : .trailing) {
-
                             HStack(alignment: .top, spacing: 12) {
-
                                 if index % 2 == 0 {
                                     Circle()
                                         .fill(Color.black)
                                         .frame(width: 30, height: 30)
-
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text(messages[index])
                                             .padding(10)
@@ -45,7 +40,19 @@ struct ContentView: View {
                                             .font(.headline)
                                             .cornerRadius(12)
                                             .lineLimit(nil)
-
+                                        
+                                            HStack {
+                                                Group {
+                                                    Text("Typing")
+                                                    Text(".")
+                                                    Text(".")
+                                                    Text(".")
+                                                }
+                                                .foregroundColor(isVisible ? .black : .white)
+                                                .opacity(isAnimating ? 1.0 : 0.0)
+                                                .animation(Animation.easeInOut(duration:1).repeatCount(5, autoreverses: true))
+                                            }
+                                        
                                     }
                                 }
                                 else{
@@ -71,6 +78,7 @@ struct ContentView: View {
                 }
 
                 Spacer()
+                
 
                 Button(action: recordingButtonPressed) {
 
@@ -114,9 +122,9 @@ struct ContentView: View {
         // Save to mp3 to wav - Done
 
         if self.isRecording {
-            var filePath = self.stopRecording()
+            let filePath = self.stopRecording()
             getTranscription(filePath: filePath)
-            
+            isVisible = false
         } else {
             self.startRecording()
         }
@@ -191,6 +199,8 @@ struct ContentView: View {
     
     // idk why savar want this but i say yippy do
     func getTranscription(filePath: String) {
+//        isVisible = true
+        isAnimating = true
             guard let url = URL(string: "http://127.0.0.1:5000/transcribe") else {
                 print("Invalid URL")
                 return
@@ -233,4 +243,33 @@ struct ContentView: View {
         }
 
 
+}
+
+
+
+
+
+struct TypingAnimation: View {
+    let duration: Double = 1.0
+    
+    @State private var isAnimating = false
+    
+    var body: some View {
+        HStack {
+            Text("Typing")
+            Group {
+                Text(".")
+                Text(".")
+                Text(".")
+            }
+            .opacity(isAnimating ? 1.0 : 0.0)
+            .animation(Animation.easeInOut(duration: duration).repeatForever(autoreverses: true))
+        }
+        .onAppear() {
+            self.isAnimating = true
+        }
+        .onDisappear() {
+            self.isAnimating = false
+        }
+    }
 }

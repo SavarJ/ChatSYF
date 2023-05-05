@@ -14,6 +14,7 @@ def transcribe_audio_to_text(audio_file_path, messages):
         return {"status": "ERROR", "message": "File not found"}
     
     try:
+        
         transcript = openai.Audio.translate("whisper-1", audio_file)
         print(transcript.text + "LOL")
         # return str(transcript.text)
@@ -24,7 +25,11 @@ def transcribe_audio_to_text(audio_file_path, messages):
         Would it be 1)Account access and balance inquiries, 2)Lost or stolen card reporting, 3)Payment inquiries and options, 4)New account applications, 
         5)Credit line increases or decreases, 6)Disputes and fraud reporting, 7)Credit limit changes, 8) Account updates and personal information changes, 9) Interest rates and fees inquiries, or 10) General customer service inquiries?
         If the category you choose is 'Other', do not mention that. Do not put the category in quotes. 
-        At the end of your response, ask if this is correct and if they'd like to be transferred over to the department."""
+        At the end of your response, ask if this is correct and if they'd like to be transferred over to the department.
+        
+        
+        If the customer seems to have agreed that they would be transferred to the right department, tell them that you have placed a call on their behalf and they will be getting a call back shortly.
+        """
 
         assistant_messages = [{"role" : "assistant", "content" : m} for i, m in enumerate(messages) if i % 2 == 0]
         user_messages += [{"role" : "user", "content" : m} for i, m in enumerate(messages) if i % 2 == 1]
