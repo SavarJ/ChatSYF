@@ -16,7 +16,7 @@ struct ContentView: View {
     @State var audioRecorder: AVAudioRecorder!
     @State var microphoneAlert = false
     @State var audioFileURL: URL?
-    @State var messages: [String] = ["Hi! I'm Sydney - your AI Concierge Bot. How can I help redirect your call?"]
+    @State var messages: [String] = ["Hi! I'm ChatSYF - your AI Concierge Bot. How can I help redirect your call?"]
     @State var audioFiles: [String] = []
     @State private var isAnimating = false
     @State private var isVisible = true
@@ -103,7 +103,7 @@ struct ContentView: View {
 
             }
 
-            .navigationTitle("SydneyGPT")
+            .navigationTitle("ChatSYF")
             .navigationBarTitleDisplayMode(.inline)
             .padding()
 
